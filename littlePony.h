@@ -19,9 +19,14 @@
 // utility
 #include "utility/AppManager.h"
 #include "utility/AppMacros.h"
+#include "utility/AssetLoader.h"
 
 // base
 #include "base/BaseObject.h"
+#include "base/NodeFactory.h"
+
+// test
+#include "Test.h"
 
 const char* littlePonyVersion();
 

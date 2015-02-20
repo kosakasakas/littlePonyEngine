@@ -1,6 +1,5 @@
 //
-//  GameObjectFactory.h
-//  BabylonClicker
+//  NodeFactory.h
 //
 //  Created by Takahiro Kosaka on 2014/08/14.
 //
@@ -9,18 +8,20 @@
 #ifndef __BabylonClicker__GameObjectFactory__
 #define __BabylonClicker__GameObjectFactory__
 
-#include <iostream>
-#include "BaseObject.h"
-#include "GameObject.h"
+#include "cocos2d.h"
 
-class GameObjectFactory : public virtual BaseObject
+using namespace cocos2d;
+
+class NodeFactory : public Ref
 {
 public:
-    GameObjectFactory();
-    virtual ~GameObjectFactory();
-    GameObject* create(int ObjectID);
-protected:
-    virtual GameObject* createObject(int ObjectID) = 0;
+    NodeFactory();
+    virtual ~NodeFactory();
+    virtual bool init();
+    CREATE_FUNC(NodeFactory);
+    Node* createObject(ValueMap& valMap);
+private:
+    Node* setProperty(Node* node, ValueMap map);
 };
 
 #endif /* defined(__BabylonClicker__GameObjectFactory__) */

@@ -1,6 +1,5 @@
 //
 //  BaseObject.cpp
-//  BabylonClicker
 //
 //  Created by Takahiro Kosaka on 2014/08/14.
 //
@@ -15,6 +14,10 @@ BaseObject::BaseObject()
 
 BaseObject::~BaseObject()
 {
+}
+
+bool BaseObject::init() {
+    return true;
 }
 
 void BaseObject::dump() const{
