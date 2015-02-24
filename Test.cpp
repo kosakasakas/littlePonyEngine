@@ -21,12 +21,7 @@ bool Test::init() {
 }
 
 bool Test::go() {
-    bool res = true;
-    
-    AssetLoader* assetLoader = AssetLoader::getInstatnce();
-    Ref* a = assetLoader->create("test.plist", "opening");
-    
-    return res;
+    return true;
 }
 
 void BaseObject::dump() const{

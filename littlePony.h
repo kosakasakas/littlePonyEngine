@@ -19,7 +19,7 @@
 // utility
 #include "utility/AppManager.h"
 #include "utility/AppMacros.h"
-#include "utility/AssetLoader.h"
+#include "utility/LittlePonyController.h"
 
 // base
 #include "base/BaseObject.h"

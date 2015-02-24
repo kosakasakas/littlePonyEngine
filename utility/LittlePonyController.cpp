@@ -6,28 +6,35 @@
 //
 //
 
-#include "AssetLoader.h"
+#include "LittlePonyController.h"
 #include "NodeFactory.h"
 using namespace cocos2d;
 
-AssetLoader* AssetLoader::_singleton = NULL;
+LittlePonyController* LittlePonyController::_singleton = NULL;
 
-AssetLoader::AssetLoader()
+LittlePonyController::LittlePonyController()
+: _uiDefMap(NULL)
 {
 }
 
-AssetLoader::~AssetLoader()
+LittlePonyController::~LittlePonyController()
 {
 }
 
-AssetLoader* AssetLoader::getInstatnce() {
+LittlePonyController* LittlePonyController::getInstatnce() {
     if( NULL == _singleton) {
-        _singleton = new AssetLoader();
+        _singleton = new LittlePonyController();
+        _singleton->init();
     }
     return _singleton;
 }
 
-Ref* AssetLoader::create(const char* fileName, const char* tagName) {
+bool LittlePonyController::init() {
+    _uiDefMap = UIDefMap::create();
+    return true;
+}
+
+Ref* LittlePonyController::getData(const char* fileName, const char* tagName) {
     Ref* res;
     std::string path = FileUtils::getInstance()->fullPathForFilename(fileName);
     if (path.empty())

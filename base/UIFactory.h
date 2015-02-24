@@ -10,12 +10,12 @@
 #define __BabylonClicker__UIFactory__
 
 #include "cocos2d.h"
+#include "UIDefMap.h"
 
 using namespace cocos2d;
 
 class UIFactory : public Ref {
 public:
-    static const std::string UI_TYPE[];
     UIFactory();
     virtual ~UIFactory();
     virtual bool init(const std::string& fileName);
@@ -23,7 +23,6 @@ public:
     static UIFactory* create();
     Node* createObject(const std::string& uiType, const std::string& uiDef, const ValueMap& uiData);
 private:
-    ValueMap _uiDefMap;
     Node* createNode(const std::string& uiType, const ValueMap& defBody, const ValueMap& uiData);
 };
 
