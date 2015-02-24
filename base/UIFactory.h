@@ -18,11 +18,13 @@ public:
     static const std::string UI_TYPE[];
     UIFactory();
     virtual ~UIFactory();
-    virtual bool init(std::string fileName);
+    virtual bool init(const std::string& fileName);
+    static UIFactory* create(const std::string& fileName);
     static UIFactory* create();
-    Node* createObject(std::string tag, std::string def);
+    Node* createObject(const std::string& uiType, const std::string& uiDef, const ValueMap& uiData);
 private:
-    Map<std::string, ValueMap> _uiDefMap;
+    ValueMap _uiDefMap;
+    Node* createNode(const std::string& uiType, const ValueMap& defBody, const ValueMap& uiData);
 };
 
 #endif /* defined(__BabylonClicker__UIFactory__) */

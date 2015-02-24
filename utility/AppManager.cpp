@@ -89,6 +89,9 @@ void AppManager::setAssetResolution() {
     } else if (winSize.width == 640) {
         _resource = &large_16x9;
         _runningDeviceType = DeviceType_iPhone5;
+    } else if (winSize.width == 750) {
+        _resource = &large_16x9;
+        _runningDeviceType = DeviceType_iPhone6;
     } else if (winSize.width == 768) {
         _resource = &large_4x3;
         _runningDeviceType = DeviceType_iPad;

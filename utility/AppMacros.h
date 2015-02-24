@@ -37,6 +37,7 @@ static Resource xlarge_4x3  = {cocos2d::Size(320, 480), "resources-xlarge", 4.0,
 enum DeviceType {
     DeviceType_iPhone4,
     DeviceType_iPhone5,
+    DeviceType_iPhone6,
     DeviceType_iPad,
     DeviceType_iPadRetina,
     DeviceType_Android,

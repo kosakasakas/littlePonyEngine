@@ -9,6 +9,7 @@
 #include "UIFactory.h"
 
 NodeFactory::NodeFactory()
+: _uif(NULL)
 {
 }
 
@@ -16,7 +17,12 @@ NodeFactory::~NodeFactory()
 {
 }
 
-Node* NodeFactory::createObject(ValueMap& valMap)
+bool NodeFactory::init() {
+    _uif = UIFactory::create("test.plist");
+    return true;
+}
+
+Node* NodeFactory::createObject(const ValueMap& valMap)
 {
     // 親Nodeの初期化
     Node* node = Node::create();
@@ -26,54 +32,30 @@ Node* NodeFactory::createObject(ValueMap& valMap)
     node->setContentSize(winsize);
     node->setScale(1.0);
     
+    manageChildren(node, valMap);
+    
+    return node;
+}
+
+bool NodeFactory::manageChildren(Node* parent, const ValueMap& valMap) {
+    bool hasChildren = (valMap.find("children") != valMap.end());
+    if (!hasChildren) {
+        return false;
+    }
+    
     ValueVector children = valMap.at("children").asValueVector();
     for (Value child : children) {
         ValueMap childMap = child.asValueMap();
-        std::string type = childMap.at("type").asString();
+        const std::string type = childMap.at("type").asString();
+        const std::string def = childMap.at("def").asString();
+        Node* uiNode = _uif->createObject(type, def, childMap);
         
-        UIFactory* uif = UIFactory::create();
-        if (type == "button") {
-            std::string def = childMap.at("def").asString();
-            Menu* menu = uif->createObject("button", def);
-            
-            setProperty(menu, childMap);
-            
-            node->addChild(menu);
-        } else if (type == "label") {
-            std::string def = childMap.at("def").asString();
-            LabelTTF* label = uif->createObject("label", def);
-            
-            setProperty(label, childMap);
-            
-            node->addChild(label);
+        if (uiNode != NULL) {
+            parent->addChild(uiNode);
+            manageChildren(uiNode, childMap); // 再帰的に子ノード追加していく
         } else {
-            CCLOG("can not find node type.");
-            node->release();
-            node = NULL;
+            CCLOG("can not find required node.");
         }
     }
-    return node;
-}
-
-Node* NodeFactory::setProperty(Node* node, ValueMap map) {
-    float pos_x = map.at("pos_x").asFloat();
-    float pos_y = map.at("pos_y").asFloat();
-    float anchor_x = map.at("anchor_x").asFloat();
-    float anchor_y = map.at("anchor_y").asFloat();
-    float scale = map.at("scale").asFloat();
-    int tag = map.at("tag").asInt();
-    int order = map.at("order").asInt();
-    
-    node->setPosition(Vec2(pos_x, pos_y));
-    node->setAnchorPoint(Vec2(anchor_x, anchor_y));
-    node->setScale(scale, scale);
-    node->setTag(tag);
-    node->setZOrder(order);
-    
-    return node;
-}
-
-
-bool NodeFactory::init() {
     return true;
 }

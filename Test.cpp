@@ -24,8 +24,7 @@ bool Test::go() {
     bool res = true;
     
     AssetLoader* assetLoader = AssetLoader::getInstatnce();
-    Ref* a = assetLoader->create("test.plist", "hoge");
-    int count = a->getReferenceCount();
+    Ref* a = assetLoader->create("test.plist", "opening");
     
     return res;
 }

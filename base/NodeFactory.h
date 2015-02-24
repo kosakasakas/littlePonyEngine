@@ -9,6 +9,7 @@
 #define __BabylonClicker__GameObjectFactory__
 
 #include "cocos2d.h"
+#include "UIFactory.h"
 
 using namespace cocos2d;
 
@@ -19,9 +20,10 @@ public:
     virtual ~NodeFactory();
     virtual bool init();
     CREATE_FUNC(NodeFactory);
-    Node* createObject(ValueMap& valMap);
+    Node* createObject(const ValueMap& valMap);
 private:
-    Node* setProperty(Node* node, ValueMap map);
+    UIFactory* _uif;
+    bool manageChildren(Node* parent, const ValueMap& valMap);
 };
 
 #endif /* defined(__BabylonClicker__GameObjectFactory__) */

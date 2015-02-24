@@ -38,7 +38,7 @@ Ref* AssetLoader::create(const char* fileName, const char* tagName) {
     ValueMap targetData = allData.at(tagName).asValueMap();
     std::string tag = targetData.at("type").asString();
     if (tag == "node") {
-        ValueMap body = targetData.at("body").asValueMap();
+        const ValueMap body = targetData.at("body").asValueMap();
         NodeFactory* nf = NodeFactory::create();
         Node* node = nf->createObject(body);
         return node;
