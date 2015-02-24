@@ -22,6 +22,7 @@ public:
     static UIDefMap* create(const std::string& fileName);
     static UIDefMap* create();
     void copyDef(const std::string& uiType, const std::string& uiDef, ValueMap& targetMap);
+    const Color3B getColor(const std::string& colorDef);
 private:
     ValueMap _uiDefMap;
 };

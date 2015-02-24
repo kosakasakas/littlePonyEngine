@@ -8,7 +8,7 @@
 
 #include "UIDefMap.h"
 
-const std::string UIDefMap::UI_TYPE[] = {"button","label"};
+const std::string UIDefMap::UI_TYPE[] = {"button","label","color"};
 
 UIDefMap::UIDefMap()
 {
@@ -98,4 +98,18 @@ void UIDefMap::copyDef(const std::string& uiType, const std::string& uiDef, Valu
             CCLOG("can not find UI def: %s", uiDef.c_str());
         }
     }
+}
+
+const Color3B UIDefMap::getColor(const std::string& colorDef) {
+    Color3B color;
+    ValueVector colorVec = _uiDefMap.at(UI_TYPE[2]).asValueVector();
+    for (Value colorVal: colorVec) {
+        ValueMap colorMap = colorVal.asValueMap();
+        if (colorMap.at("name").asString() == colorDef) {
+            color.r = colorMap.at("r").asInt();
+            color.g = colorMap.at("g").asInt();
+            color.b = colorMap.at("b").asInt();
+        }
+    }
+    return color;
 }
