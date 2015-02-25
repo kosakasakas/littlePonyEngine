@@ -8,6 +8,7 @@
 
 #include "ButtonFactory.h"
 #include "extensions/cocos-ext.h"
+#include "LPMenuItemSprite.h"
 
 USING_NS_CC_EXT;
 
@@ -75,7 +76,8 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
                                 (use9Sprite_height) ? size_height : originSize.height);
         normalSprite->setContentSize(contentSize);
         selectedSprite->setContentSize(contentSize);
-        mi = MenuItemSprite::create(normalSprite, selectedSprite);
+        ccMenuCallback callback = CC_CALLBACK_1(ButtonFactory::onButtonCalled, this);
+        mi = LPMenuItemSprite::create(normalSprite, selectedSprite, callback, getNode());
         
         // 9Scaleしない場合は線形でスケールをかける
         if (!use9Sprite_width) mi->setScaleX((float)size_width/(float)contentSize.width);
@@ -94,4 +96,8 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
     setProperty(uiData);
     
     return getNode();
+}
+
+void ButtonFactory::onButtonCalled(Ref* sender) {
+    CCLOG("here");
 }

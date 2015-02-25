@@ -21,6 +21,7 @@ public:
     virtual ~ButtonFactory();
     CREATE_FUNC(ButtonFactory);
     virtual Node* createObject(const ValueMap& defBody, const ValueMap& uiData);
+    void onButtonCalled(Ref* sender);
 };
 
 #endif /* defined(__BabylonClicker__ButtonFactory__) */
