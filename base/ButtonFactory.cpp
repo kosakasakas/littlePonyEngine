@@ -9,6 +9,7 @@
 #include "ButtonFactory.h"
 #include "extensions/cocos-ext.h"
 #include "LPMenuItemSprite.h"
+#include "LittlePonyController.h"
 
 USING_NS_CC_EXT;
 
@@ -77,6 +78,7 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
         normalSprite->setContentSize(contentSize);
         selectedSprite->setContentSize(contentSize);
         ccMenuCallback callback = CC_CALLBACK_1(ButtonFactory::onButtonCalled, this);
+        
         mi = LPMenuItemSprite::create(normalSprite, selectedSprite, callback, getNode());
         
         // 9Scaleしない場合は線形でスケールをかける
@@ -99,5 +101,5 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
 }
 
 void ButtonFactory::onButtonCalled(Ref* sender) {
-    CCLOG("here");
+    LittlePonyController::getInstatnce()->notifyUINotificationCenter(sender);
 }

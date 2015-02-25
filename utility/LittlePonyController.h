@@ -11,18 +11,27 @@
 
 #include "cocos2d.h"
 #include "UIDefMap.h"
+#include "Subject.h"
 
-class LittlePonyController
+class LittlePonyController : public Ref
 {
 public:
     LittlePonyController();
     virtual ~LittlePonyController();
     static LittlePonyController* getInstatnce();
-    cocos2d::Ref* getData(const char* fileName, const char* tagName);
     bool init();
+    
+    // assets loader
     CC_SYNTHESIZE_READONLY(UIDefMap*, _uiDefMap, UIDefMap);
+    cocos2d::Ref* getData(const char* fileName, const char* tagName);
+    
+    // ui notification
+    void notifyUINotificationCenter(Ref* sender);
+    void addToUINotificationCenter(Observer* o);
+    
 private:
     static LittlePonyController* _singleton;
+    Subject* _uiNotificationCenter;
 };
 
 

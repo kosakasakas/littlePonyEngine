@@ -14,6 +14,7 @@ LittlePonyController* LittlePonyController::_singleton = NULL;
 
 LittlePonyController::LittlePonyController()
 : _uiDefMap(NULL)
+, _uiNotificationCenter(NULL)
 {
 }
 
@@ -31,6 +32,11 @@ LittlePonyController* LittlePonyController::getInstatnce() {
 
 bool LittlePonyController::init() {
     _uiDefMap = UIDefMap::create();
+    _uiDefMap->retain();
+    
+    _uiNotificationCenter = Subject::create();
+    _uiNotificationCenter->retain();
+    
     return true;
 }
 
@@ -55,4 +61,12 @@ Ref* LittlePonyController::getData(const char* fileName, const char* tagName) {
         res = NULL;
     }
     return res;
+}
+
+void LittlePonyController::notifyUINotificationCenter(Ref* sender) {
+    _uiNotificationCenter->notifyObservers(sender);
+}
+
+void LittlePonyController::addToUINotificationCenter(Observer* o) {
+    _uiNotificationCenter->registerObserver(o);
 }
