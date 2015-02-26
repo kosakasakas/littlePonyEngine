@@ -13,11 +13,11 @@
 
 using namespace cocos2d;
 
-class Observer : public Ref {
+class Observer {
 public:
     Observer(){};
     virtual ~Observer(){};
-    virtual void onNotice(Ref* sender) = 0;
+    virtual void onNotice(Ref* sender) = 0; // must overrride this method.
 };
 
 #endif

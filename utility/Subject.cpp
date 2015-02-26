@@ -40,6 +40,7 @@ void Subject::notifyObservers(Ref* sender) {
     while (it != _observers.end()) {
         Observer* o = *it;
         o->onNotice(sender);
+        ++it;
     }
 }
 

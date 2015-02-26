@@ -22,6 +22,10 @@ ButtonFactory::~ButtonFactory()
 }
 
 Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiData) {
+    // このnodeに対してUIをぶら下げて返す。
+    Node* node = AbstructComponentFactory::createObject(defBody, uiData);
+    node->retain();
+    
     // from defBody
     std::string normalImage = defBody.at("normalImage").asString();
     std::string selectedImage = defBody.at("selectedImage").asString();
@@ -41,6 +45,8 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
                         : "";
     
     MenuItem* mi = NULL;
+    ccMenuCallback callback = CC_CALLBACK_1(ButtonFactory::onButtonCalled, this);
+    
     if (use9Sprite_width || use9Sprite_height) {
         float not_def = 0.3333f;
         float cap_scale_width = (defBody.find("cap_scale_width") != defBody.end())
@@ -77,15 +83,14 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
                                 (use9Sprite_height) ? size_height : originSize.height);
         normalSprite->setContentSize(contentSize);
         selectedSprite->setContentSize(contentSize);
-        ccMenuCallback callback = CC_CALLBACK_1(ButtonFactory::onButtonCalled, this);
         
-        mi = LPMenuItemSprite::create(normalSprite, selectedSprite, callback, getNode());
+        mi = LPMenuItemSprite::create(normalSprite, selectedSprite, callback, node);
         
         // 9Scaleしない場合は線形でスケールをかける
         if (!use9Sprite_width) mi->setScaleX((float)size_width/(float)contentSize.width);
         if (!use9Sprite_height) mi->setScaleY((float)size_height/(float)contentSize.height);
     } else {
-        mi = MenuItemImage::create(normalImage, selectedImage);
+        mi = MenuItemImage::create(normalImage, selectedImage, callback);
         Size contentSize = mi->getContentSize();
         mi->setScaleX((float)size_width/(float)contentSize.width);
         mi->setScaleY((float)size_height/(float)contentSize.height);
@@ -94,12 +99,13 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
     Menu* m = Menu::create(mi, NULL);
     m->setPosition(Vec2(0,0));
     
-    addChild(m);
-    setProperty(uiData);
+    node->addChild(m);
     
-    return getNode();
+    return node;
 }
 
 void ButtonFactory::onButtonCalled(Ref* sender) {
-    LittlePonyController::getInstatnce()->notifyUINotificationCenter(sender);
+    // buttonの場合、常に二階層上が基準nodeになる想定
+    Node* node = ((Node*)sender)->getParent()->getParent();
+    LittlePonyController::getInstatnce()->notifyUINotificationCenter(node);
 }

@@ -19,11 +19,9 @@ public:
     AbstructComponentFactory();
     virtual ~AbstructComponentFactory();
     virtual bool init();
-    virtual Node* createObject(const ValueMap& defBody, const ValueMap& uiData) = 0;
-    CC_SYNTHESIZE_READONLY(Node*, _node, Node);
+    virtual Node* createObject(const ValueMap& defBody, const ValueMap& uiData);
 protected:
-    virtual Node* setProperty(const ValueMap& uiData);
-    void addChild(Node* child);
+    virtual void setProperty(Node* node, const ValueMap& uiData);
 };
 
 #endif /* defined(__BabylonClicker__AbstructComponentFactory__) */
