@@ -15,6 +15,7 @@ AppManager* AppManager::_singleton = NULL;
 AppManager::AppManager()
 : _resource(NULL)
 , _runningDeviceType(DeviceType_Android)
+, _worldAnchor(BOTTOM_LEFT)
 {
 }
 
@@ -100,4 +101,15 @@ void AppManager::setAssetResolution() {
         _runningDeviceType = DeviceType_iPadRetina;
     }
 #endif
+}
+
+void AppManager::getWorldPos(cocos2d::Vec2& pos) {
+    Size win = Director::getInstance()->getWinSize();
+    if (_worldAnchor == TOP_LEFT) {
+        pos = Vec2(pos.x, win.height-pos.y);
+    } else if (_worldAnchor == TOP_RIGHT) {
+        pos = Vec2(win.width-pos.x, win.height-pos.y);
+    } else if (_worldAnchor == BOTTOM_RIGHT) {
+        pos = Vec2(win.width-pos.x, pos.y);
+    }
 }

@@ -28,6 +28,15 @@ public:
     static AppManager* getInstance();
     CC_SYNTHESIZE_READONLY(DeviceType, _runningDeviceType, RunningDeviceType);
     CC_SYNTHESIZE_READONLY(Resource*, _resource, Resource);
+    
+    enum WORLD_ANCHOR_TYPE {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
+    };
+    CC_SYNTHESIZE(WORLD_ANCHOR_TYPE, _worldAnchor, WorldAnchor);
+    void getWorldPos(cocos2d::Vec2& pos);
 };
 
 #endif /* defined(__UCEngine__AppManager__) */

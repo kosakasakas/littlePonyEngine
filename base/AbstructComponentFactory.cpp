@@ -7,6 +7,7 @@
 //
 
 #include "AbstructComponentFactory.h"
+#include "AppManager.h"
 
 AbstructComponentFactory::AbstructComponentFactory()
 {
@@ -40,8 +41,13 @@ void AbstructComponentFactory::setProperty(Node* node, const ValueMap& uiData) {
         float scale = (uiData.find("scale") != uiData.end()) ? uiData.at("scale").asFloat() : 1.0f;
         int tag = (uiData.find("tag") != uiData.end()) ? uiData.at("tag").asInt() : -1;
         int order = (uiData.find("order") != uiData.end()) ? uiData.at("order").asInt() : -1;
+        bool useRelative = (uiData.find("useRelative") != uiData.end()) ? uiData.at("useRelative").asBool() : false;
         
-        node->setPosition(Vec2(pos_x, pos_y));
+        Vec2 pos(pos_x, pos_y);
+        if (!useRelative) {
+            AppManager::getInstance()->getWorldPos(pos);
+        }
+        node->setPosition(pos);
         node->setAnchorPoint(Vec2(anchor_x, anchor_y));
         node->setScale(scale, scale);
         node->setTag(tag);
