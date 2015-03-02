@@ -8,7 +8,8 @@
 
 #include "UIDefMap.h"
 
-const std::string UIDefMap::UI_TYPE[] = {"button","label","color"};
+// UIFactoryで生成出来るUIコンポーネント一覧
+const std::string UIDefMap::UI_TYPE[] = {"button","label","color", "node", "sprite"};
 
 UIDefMap::UIDefMap()
 {

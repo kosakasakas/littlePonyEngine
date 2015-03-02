@@ -18,6 +18,7 @@ class AbstructComponentFactory : public Ref
 public:
     AbstructComponentFactory();
     virtual ~AbstructComponentFactory();
+    CREATE_FUNC(AbstructComponentFactory);
     virtual bool init();
     virtual Node* createObject(const ValueMap& defBody, const ValueMap& uiData);
 protected:

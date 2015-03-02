@@ -9,6 +9,7 @@
 #include "UIFactory.h"
 #include "ButtonFactory.h"
 #include "LabelFactory.h"
+#include "SpriteFactory.h"
 #include "LittlePonyController.h"
 
 UIFactory::UIFactory()
@@ -69,6 +70,12 @@ Node* UIFactory::createNode(const std::string& uiType, const ValueMap& defBody, 
     } else if (uiType == UIDefMap::UI_TYPE[1]) {
         LabelFactory* lf = LabelFactory::create();
         ret = lf->createObject(defBody, uiData);
+    } else if (uiType == UIDefMap::UI_TYPE[3]) {
+        AbstructComponentFactory* acf = AbstructComponentFactory::create();
+        ret = acf->createObject(defBody, uiData);
+    } else if (uiType == UIDefMap::UI_TYPE[4]) {
+        SpriteFactory* sf = SpriteFactory::create();
+        ret = sf->createObject(defBody, uiData);
     } else {
         CCLOG("can not support this UI type");
     }

@@ -47,7 +47,7 @@ bool NodeFactory::manageChildren(Node* parent, const ValueMap& valMap) {
     for (Value child : children) {
         ValueMap childMap = child.asValueMap();
         const std::string type = childMap.at("type").asString();
-        const std::string def = childMap.at("def").asString();
+        const std::string def = (childMap.find("def") != childMap.end()) ? childMap.at("def").asString() : "uidef not defined";
         Node* uiNode = _uif->createObject(type, def, childMap);
         
         if (uiNode != NULL) {
