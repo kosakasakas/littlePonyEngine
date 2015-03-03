@@ -15,6 +15,7 @@ LittlePonyController* LittlePonyController::_singleton = NULL;
 LittlePonyController::LittlePonyController()
 : _uiDefMap(NULL)
 , _uiNotificationCenter(NULL)
+, _currentSceneLayer(NULL)
 {
 }
 
@@ -69,4 +70,23 @@ void LittlePonyController::notifyUINotificationCenter(Ref* sender) {
 
 void LittlePonyController::addToUINotificationCenter(Observer* o) {
     _uiNotificationCenter->registerObserver(o);
+}
+
+void LittlePonyController::removeFromUINotificationCenter(Observer* o) {
+    _uiNotificationCenter->removeObserver(o);
+}
+
+void LittlePonyController::replaceScene(Scene* scene) {
+    if (_currentSceneLayer) {
+        _currentSceneLayer->willExit();
+    }
+    Director::getInstance()->replaceScene(scene);
+}
+
+void LittlePonyController::setCurrentSceneLayer(LPLayer* layer) {
+    if (_currentSceneLayer) {
+        _currentSceneLayer->release();
+    }
+    layer->retain();
+    _currentSceneLayer = layer;
 }

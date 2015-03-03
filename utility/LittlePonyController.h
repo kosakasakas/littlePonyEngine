@@ -12,6 +12,7 @@
 #include "cocos2d.h"
 #include "UIDefMap.h"
 #include "Subject.h"
+#include "LPLayer.h"
 
 class LittlePonyController : public Ref
 {
@@ -28,10 +29,16 @@ public:
     // ui notification
     void notifyUINotificationCenter(Ref* sender);
     void addToUINotificationCenter(Observer* o);
+    void removeFromUINotificationCenter(Observer* o);
+    
+    // for cocos2d-x custom API
+    void setCurrentSceneLayer(LPLayer* layer);
+    void replaceScene(Scene* scene);
     
 private:
     static LittlePonyController* _singleton;
     Subject* _uiNotificationCenter;
+    LPLayer* _currentSceneLayer;
 };
 
 

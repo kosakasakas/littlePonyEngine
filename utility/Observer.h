@@ -13,7 +13,7 @@
 
 using namespace cocos2d;
 
-class Observer {
+class Observer : public virtual Ref {
 public:
     Observer(){};
     virtual ~Observer(){};
