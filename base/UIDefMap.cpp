@@ -9,7 +9,7 @@
 #include "UIDefMap.h"
 
 // UIFactoryで生成出来るUIコンポーネント一覧
-const std::string UIDefMap::UI_TYPE[] = {"button","label","color", "node", "sprite"};
+const std::string UIDefMap::UI_TYPE[] = {"button","label","color", "node", "sprite", "layer"};
 
 UIDefMap::UIDefMap()
 {
@@ -72,6 +72,7 @@ bool UIDefMap::init(const std::string& fileName) {
                             // fond
                             ValueVector vec = _uiDefMap[defType].asValueVector();
                             vec.push_back(child);
+                            _uiDefMap[defType] = vec;
                         }
                     }
                 }
