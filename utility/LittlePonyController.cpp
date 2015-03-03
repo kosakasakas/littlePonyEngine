@@ -75,18 +75,3 @@ void LittlePonyController::addToUINotificationCenter(Observer* o) {
 void LittlePonyController::removeFromUINotificationCenter(Observer* o) {
     _uiNotificationCenter->removeObserver(o);
 }
-
-void LittlePonyController::replaceScene(Scene* scene) {
-    if (_currentSceneLayer) {
-        _currentSceneLayer->willExit();
-    }
-    Director::getInstance()->replaceScene(scene);
-}
-
-void LittlePonyController::setCurrentSceneLayer(LPLayer* layer) {
-    if (_currentSceneLayer) {
-        _currentSceneLayer->release();
-    }
-    layer->retain();
-    _currentSceneLayer = layer;
-}

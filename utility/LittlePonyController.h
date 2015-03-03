@@ -31,10 +31,6 @@ public:
     void addToUINotificationCenter(Observer* o);
     void removeFromUINotificationCenter(Observer* o);
     
-    // for cocos2d-x custom API
-    void setCurrentSceneLayer(LPLayer* layer);
-    void replaceScene(Scene* scene);
-    
 private:
     static LittlePonyController* _singleton;
     Subject* _uiNotificationCenter;

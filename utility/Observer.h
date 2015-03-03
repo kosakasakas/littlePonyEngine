@@ -13,11 +13,12 @@
 
 using namespace cocos2d;
 
-class Observer : public virtual Ref {
+class Observer {
 public:
     Observer(){};
     virtual ~Observer(){};
     virtual void onNotice(Ref* sender) = 0; // must overrride this method.
+    //virtual Ref* getRef() = 0; // 仮想継承するとautorelease()などの関数で衝突するので、必ず自身の参照を返す実装をここに入れる。
 };
 
 #endif
