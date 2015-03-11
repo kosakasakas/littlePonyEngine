@@ -50,13 +50,15 @@ Ref* LittlePonyController::getData(const char* fileName, const char* tagName) {
     }
     ValueMap allData = FileUtils::getInstance()->getValueMapFromFile(path);
     ValueMap targetData = allData.at(tagName).asValueMap();
-    std::string tag = targetData.at("type").asString();
-    if (tag == "node") {
+    std::string type = targetData.at("type").asString();
+    if (type == "node") {
+        int tag = targetData.at("tag").asInt();
         const ValueMap body = targetData.at("body").asValueMap();
         NodeFactory* nf = NodeFactory::create();
         Node* node = nf->createObject(body);
+        node->setTag(tag);
         return node;
-    } else if (tag == "uidef") {
+    } else if (type == "uidef") {
         return NULL;
     } else {
         res = NULL;
