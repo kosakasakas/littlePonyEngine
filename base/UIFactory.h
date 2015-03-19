@@ -24,6 +24,7 @@ public:
     Node* createObject(const std::string& uiType, const std::string& uiDef, const ValueMap& uiData);
 private:
     Node* createNode(const std::string& uiType, const ValueMap& defBody, const ValueMap& uiData);
+    UIDefMap* _uidefMap;
 };
 
 #endif /* defined(__BabylonClicker__UIFactory__) */

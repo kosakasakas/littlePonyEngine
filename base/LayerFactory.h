@@ -20,7 +20,7 @@ public:
     LayerFactory();
     virtual ~LayerFactory();
     CREATE_FUNC(LayerFactory);
-    virtual Node* createObject(const ValueMap& valMap, const ValueMap& uiData);
+    virtual Node* createObject(const ValueMap& defBody, const ValueMap& uiData);
 };
 
 #endif /* defined(__BabylonClicker__LayerFactory__) */

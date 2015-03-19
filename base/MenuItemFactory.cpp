@@ -1,30 +1,29 @@
 //
-//  ButtonFactory.cpp
+//  MenuItemFactory.cpp
 //  BabylonClicker
 //
-//  Created by Takahiro Kosaka on 2015/02/23.
+//  Created by Takahiro Kosaka on 2015/03/18.
 //
 //
 
-#include "ButtonFactory.h"
+#include "MenuItemFactory.h"
 #include "extensions/cocos-ext.h"
 #include "LPMenuItemSprite.h"
+#include "LPScrollableMenu.h"
 #include "LittlePonyController.h"
+#include "NodeFactory.h"
 
 USING_NS_CC_EXT;
 
-ButtonFactory::ButtonFactory()
+MenuItemFactory::MenuItemFactory()
 {
 }
 
-ButtonFactory::~ButtonFactory()
+MenuItemFactory::~MenuItemFactory()
 {
 }
 
-Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiData) {
-    // このnodeに対してUIをぶら下げて返す。
-    Node* node = AbstructComponentFactory::createObject(defBody, uiData);
-    node->retain();
+Node* MenuItemFactory::createObject(const ValueMap& defBody, const ValueMap& uiData) {
     
     // from defBody
     std::string normalImage = defBody.at("normalImage").asString();
@@ -36,8 +35,12 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
     bool use9Sprite_height = (defBody.find("use9sprite_height") != defBody.end())
                             ? defBody.at("use9sprite_height").asBool()
                             : false;
+    bool scrollable = (defBody.find("scrollable") != defBody.end())
+                            ? defBody.at("scrollable").asBool()
+                            : false;
     
     // from uiData
+    int tag = uiData.at("tag").asInt();
     int size_width = uiData.at("size_width").asInt();
     int size_height = uiData.at("size_height").asInt();
     std::string text = (uiData.find("text") != uiData.end())
@@ -45,24 +48,27 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
                         : "";
     
     MenuItem* mi = NULL;
-    ccMenuCallback callback = CC_CALLBACK_1(ButtonFactory::onButtonCalled, this);
+    ccMenuCallback callback = CC_CALLBACK_1(MenuItemFactory::onButtonCalled, this);
     
     if (use9Sprite_width || use9Sprite_height) {
         float not_def = 0.3333f;
         float cap_scale_width = (defBody.find("cap_scale_width") != defBody.end())
-                            ? defBody.at("cap_scale_width").asFloat()
-                            : not_def;
+        ? defBody.at("cap_scale_width").asFloat()
+        : not_def;
         float cap_scale_height = (defBody.find("cap_scale_height") != defBody.end())
-                            ? defBody.at("cap_scale_height").asFloat()
-                            : not_def;
+        ? defBody.at("cap_scale_height").asFloat()
+        : not_def;
         
         Scale9Sprite* normalSprite;
         Scale9Sprite* selectedSprite;
         if (cap_scale_width == not_def && cap_scale_height == not_def) {
+            
             // cap幅が未定義なので、デフォルト9分割を適用
             normalSprite = Scale9Sprite::create(normalImage);
             selectedSprite = Scale9Sprite::create(selectedImage);
+            
         } else {
+            
             // 画像サイズと全体スケールの取得のためSpriteを使う
             Sprite* sp = Sprite::create(normalImage);
             Size s = sp->getContentSize();
@@ -76,6 +82,7 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
             
             normalSprite = Scale9Sprite::create(normalImage, origin, cap);
             selectedSprite = Scale9Sprite::create(selectedImage, origin, cap);
+            
         }
         
         Size originSize = normalSprite->getContentSize();
@@ -84,11 +91,16 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
         normalSprite->setContentSize(contentSize);
         selectedSprite->setContentSize(contentSize);
         
-        mi = LPMenuItemSprite::create(normalSprite, selectedSprite, callback, node);
+        mi = LPMenuItemSprite::create(normalSprite, selectedSprite, callback);
         
         // 9Scaleしない場合は線形でスケールをかける
         if (!use9Sprite_width) mi->setScaleX((float)size_width/(float)contentSize.width);
         if (!use9Sprite_height) mi->setScaleY((float)size_height/(float)contentSize.height);
+        
+        // ラベルなど、MenuItemと連動して動くようなnodeをmiにaddchildする。
+        NodeFactory* nf = NodeFactory::create();
+        nf->manageColumnNode("container", mi, uiData);
+        
     } else {
         mi = MenuItemImage::create(normalImage, selectedImage, callback);
         Size contentSize = mi->getContentSize();
@@ -96,16 +108,39 @@ Node* ButtonFactory::createObject(const ValueMap& defBody, const ValueMap& uiDat
         mi->setScaleY((float)size_height/(float)contentSize.height);
     }
     
-    Menu* m = Menu::create(mi, NULL);
-    m->setPosition(Vec2(0,0));
+    // MenuItemはMenuにaddされる事を期待しているので、Tag以外のプロパティはsetPropertyしないでそのまま返す。
+    mi->setTag(tag);
+    mi->retain();
     
-    node->addChild(m);
-    
-    return node;
+    return mi;
 }
 
-void ButtonFactory::onButtonCalled(Ref* sender) {
-    // buttonの場合、常に二階層上が基準nodeになる想定
-    Node* node = ((Node*)sender)->getParent()->getParent();
-    LittlePonyController::getInstatnce()->notifyUINotificationCenter(node);
+MenuItem* MenuItemFactory::createMenuItem(const ValueMap& defBody, const ValueMap& uiData) {
+    return (MenuItem*)createObject(defBody, uiData);
+}
+
+void MenuItemFactory::createMenuItemVector(Vector<MenuItem*>& destVec, const ValueMap& defBody, const ValueMap& uiData) {
+    destVec.clear();
+    
+    // from uiData.
+    int tag = uiData.at("tag").asInt();
+    int list_rowNum = (uiData.find("list_row_num") != uiData.end()) ? uiData.at("list_row_num").asInt() : 1;
+    int list_columnNum = (uiData.find("list_column_num") != uiData.end()) ? uiData.at("list_column_num").asInt() : 1;
+    
+    for (int i = 0; i < list_rowNum; ++i) {
+        for (int j = 0; j < list_columnNum; ++j) {
+            MenuItem* mi = createMenuItem(defBody, uiData);
+
+            // タグは連番で貼り直す。
+            mi->setTag(tag);
+            ++tag;
+            
+            destVec.pushBack(mi);
+        }
+    }
+    
+}
+
+void MenuItemFactory::onButtonCalled(Ref* sender) {
+    LittlePonyController::getInstatnce()->notifyUINotificationCenter(sender);
 }

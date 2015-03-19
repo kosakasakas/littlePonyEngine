@@ -7,18 +7,20 @@
 //
 
 #include "UIFactory.h"
-#include "ButtonFactory.h"
 #include "LabelFactory.h"
 #include "SpriteFactory.h"
 #include "LayerFactory.h"
+#include "MenuFactory.h"
 #include "LittlePonyController.h"
 
 UIFactory::UIFactory()
+: _uidefMap(NULL)
 {
 }
 
 UIFactory::~UIFactory()
 {
+    _uidefMap->release();
 }
 
 UIFactory* UIFactory::create(const std::string& fileName)
@@ -50,13 +52,20 @@ bool UIFactory::init(const std::string& fileName) {
         return false;
     }
     
+    // defMapはLittlePonyControlerにキャッシュされているのを基本的には使うが、ファイルパスがuidef.plist以外の場合はそっちを使う。
+    if (path == "uidef.plist") {
+        _uidefMap = LittlePonyController::getInstatnce()->getUIDefMap();
+    } else {
+        _uidefMap = UIDefMap::create(path);
+    }
+    _uidefMap->retain();
+    
     return true;
 }
 
 Node* UIFactory::createObject(const std::string& uiType, const std::string& uiDef, const ValueMap& uiData) {
     ValueMap defBody;
-    UIDefMap* uiDefMap = LittlePonyController::getInstatnce()->getUIDefMap();
-    uiDefMap->copyDef(uiType, uiDef, defBody);
+    _uidefMap->copyDef(uiType, uiDef, defBody);
     
     Node* ret = createNode(uiType, defBody, uiData);
     
@@ -66,7 +75,8 @@ Node* UIFactory::createObject(const std::string& uiType, const std::string& uiDe
 Node* UIFactory::createNode(const std::string& uiType, const ValueMap& defBody, const ValueMap& uiData) {
     Node* ret = NULL;
     if (uiType == UIDefMap::UI_TYPE[0]) {
-        ButtonFactory* bf = ButtonFactory::create();
+        //ButtonFactory* bf = ButtonFactory::create();
+        MenuFactory* bf = MenuFactory::create();
         ret = bf->createObject(defBody, uiData);
     } else if (uiType == UIDefMap::UI_TYPE[1]) {
         LabelFactory* lf = LabelFactory::create();

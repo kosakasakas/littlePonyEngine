@@ -19,7 +19,7 @@ public:
     LPMenuItemSprite();
     virtual ~LPMenuItemSprite();
     static LPMenuItemSprite* create(Node* normalSprite, Node* selectedSprite, Node* disabledSprite, const ccMenuCallback& callback, Node* targetNode);
-    static LPMenuItemSprite* create(Node* normalSprite, Node* selectedSprite, const ccMenuCallback& callback, Node* targetNode);
+    static LPMenuItemSprite* create(Node* normalSprite, Node* selectedSprite, const ccMenuCallback& callback, Node* targetNode = NULL);
     virtual void onEnter();
     virtual void onExit();
     virtual void selected();

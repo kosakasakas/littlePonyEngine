@@ -29,7 +29,7 @@
 
 using namespace cocos2d;
 
-class XTLayer : public cocos2d::Layer
+class XTLayer : public Layer
 {
 public:
     enum XTTouchDirection { LEFT,RIGHT,UP,DOWN };
@@ -79,7 +79,6 @@ public:
     void xtLongTapTime(float value) { _xtLongTapTime = value;};
     float xtDoubleTapTime() { return _xtDoubleTapTime;};
     void xtDoubleTapTime(float value) { _xtDoubleTapTime = value;};
-    
     
     // Override of touches
     virtual bool onTouchBegan(cocos2d::Touch* _touches, cocos2d::Event* event);

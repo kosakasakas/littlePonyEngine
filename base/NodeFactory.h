@@ -21,9 +21,15 @@ public:
     virtual bool init();
     CREATE_FUNC(NodeFactory);
     Node* createObject(const ValueMap& valMap);
+    UIFactory* getUIFactory();
+    
+    bool manageChildren(Node* parent, const ValueMap& valMap);
+    bool manageColumnNode(const char* column, Node* parent, const ValueMap& valMap);
+    
+    // containerタグ以下のnodeを生成して返すメソッド
+    Node* getContainerNode(const ValueMap& valMap);
 private:
     UIFactory* _uif;
-    bool manageChildren(Node* parent, const ValueMap& valMap);
 };
 
 #endif /* defined(__BabylonClicker__GameObjectFactory__) */

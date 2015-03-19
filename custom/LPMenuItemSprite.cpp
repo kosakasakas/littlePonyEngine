@@ -40,9 +40,11 @@ LPMenuItemSprite* LPMenuItemSprite::create(Node* normalSprite, Node* selectedSpr
 
 void LPMenuItemSprite::onEnter() {
     MenuItemSprite::onEnter();
-    Node* actionNode = (_targetNode != NULL) ? _targetNode : NULL;
-    _oldScaleX = actionNode->getScaleX();
-    _oldScaleY = actionNode->getScaleY();
+    Node* actionNode = (_targetNode != NULL) ? _targetNode : this;
+    if (actionNode) {
+        _oldScaleX = actionNode->getScaleX();
+        _oldScaleY = actionNode->getScaleY();
+    }
 }
 
 void LPMenuItemSprite::onExit() {
@@ -56,12 +58,16 @@ void LPMenuItemSprite::activate() {
 
 void LPMenuItemSprite::selected() {
     MenuItemSprite::selected();
-    Node* actionNode = (_targetNode != NULL) ? _targetNode : NULL;
-    actionNode->runAction(EaseElasticOut::create(ScaleTo::create(SCALE_ACTION_DURATION, _oldScaleX * SCALE_EFFECT_FACTOR, _oldScaleY * SCALE_EFFECT_FACTOR)));
+    Node* actionNode = (_targetNode != NULL) ? _targetNode : this;
+    if (actionNode) {
+        actionNode->runAction(EaseElasticOut::create(ScaleTo::create(SCALE_ACTION_DURATION, _oldScaleX * SCALE_EFFECT_FACTOR, _oldScaleY * SCALE_EFFECT_FACTOR)));
+    }
 }
 
 void LPMenuItemSprite::unselected() {
     MenuItemSprite::unselected();
-    Node* actionNode = (_targetNode != NULL) ? _targetNode : NULL;
-    actionNode->runAction(EaseElasticOut::create(ScaleTo::create(SCALE_ACTION_DURATION, _oldScaleX, _oldScaleY)));
+    Node* actionNode = (_targetNode != NULL) ? _targetNode : this;
+    if (actionNode) {
+        actionNode->runAction(EaseElasticOut::create(ScaleTo::create(SCALE_ACTION_DURATION, _oldScaleX, _oldScaleY)));
+    }
 }
