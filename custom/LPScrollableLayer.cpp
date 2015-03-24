@@ -15,6 +15,7 @@ LPScrollableLayer::LPScrollableLayer()
 : LPScrollView::LPScrollView()
 , _waitingTouchEnd(false)
 , _containerMenu(NULL)
+, _originalContainerPos(0,0)
 {
 }
 
@@ -55,6 +56,9 @@ bool LPScrollableLayer::init() {
     if ( !LPScrollView::init() ) {
         return false;
     }
+    
+    updateScrollInfo();
+    
     return true;
 }
 
@@ -63,6 +67,7 @@ bool LPScrollableLayer::onTouchBegan(Touch* touch, Event* event) {
     _pressPoint = touch->getLocationInView();
     if (_containerMenu && !_waitingTouchEnd) {
         CCLOG("onTouchBegin-onTouchbegin");
+        _container->stopAllActions();
         _waitingTouchEnd = _containerMenu->onTouchBegan(touch, event);
     }
     return LPScrollView::onTouchBegan(touch, event);
@@ -176,6 +181,47 @@ void LPScrollableLayer::onExit() {
     LPScrollView::onExit();
 }
 
+void LPScrollableLayer::setContentOffset(Vec2 offset, bool animated) {
+    
+    _validScrollableDistMap.clear();
+    
+    LPScrollView::setContentOffset(offset, animated);
+    updateScrollInfo();
+    _offset = offset;
+    
+    /*
+    // Offsetを入れる前の位置を原点として持っておく
+    _originalContainerPos = _container->getPosition();
+    
+    // Offsetを入れた後の位置から有効スクロール距離を計算しておく
+    LPScrollView::setContentOffset(offset, animated);
+    getScrollableDistance(_validScrollableDistMap, _container->getPosition());
+    
+    // Offsetを入れた後の位置を原点に入れ替える
+    _originalContainerPos = _container->getPosition();
+     */
+}
+
+void LPScrollableLayer::setViewSize(Size size) {
+    LPScrollView::setViewSize(size);
+    updateScrollInfo();
+}
+
+void LPScrollableLayer::updateScrollInfo() {
+    Size containerSize = _container->getContentSize();
+    Size viewSize = getViewSize();
+    
+    // _vieawableの基点は常に原点であるという前提
+    _viewableX = 0;
+    _viewableY = 0;
+    
+    float maxX = containerSize.width - viewSize.width;
+    float maxY = containerSize.height - viewSize.height;
+
+    _scrollableX = (maxX > 0) ? maxX : 0;
+    _scrollableY = (maxY > 0) ? maxY : 0;
+}
+
 void LPScrollableLayer::setLPContainer(Layer *menu) {
     _containerMenu = menu;
     _containerMenu->retain();
@@ -199,5 +245,92 @@ void LPScrollableLayer::xtLongTapGesture(Point position) {
 }
 
 void LPScrollableLayer::xtSwipeGesture(XTTouchDirection direction, float distance, float speed) {
-    CCLOG("xtSwipe");
+    fitToAction(direction, distance * speed);
+}
+
+Vec2 makeDirVec(LPScrollableLayer::XTTouchDirection direction) {
+    Vec2 delta;
+    if (direction == LPScrollableLayer::RIGHT) {
+        delta.x = -1;
+        delta.y = 0;
+    } else if (direction == LPScrollableLayer::LEFT) {
+        delta.x = 1;
+        delta.y = 0;
+    } else if (direction == LPScrollableLayer::DOWN) {
+        delta.x = 0;
+        delta.y = 1;
+    } else if (direction == LPScrollableLayer::UP) {
+        delta.x = 0;
+        delta.y = -1;
+    } else {
+        delta.x = 0;
+        delta.y = 0;
+    }
+    return delta;
+}
+
+bool LPScrollableLayer::canScrollHorizontal()
+{
+    return getContentSize().width > getViewSize().width;
+}
+
+bool LPScrollableLayer::canScrollVertical()
+{
+    return getContentSize().height > getViewSize().height;
+}
+
+
+void LPScrollableLayer::fitToAction(XTTouchDirection direction, float distance)
+{
+    
+    Vec2 dir = makeDirVec(direction);
+    Vec2 delta = distance * dir;
+    
+    // Cは現時点での_containerの位置、C_dashはdelta分移動した時点での位置
+    Vec2 pos = _container->getPosition();
+    Vec2 C_dash(pos.x + delta.x, pos.y + delta.y);
+    Vec2 C(pos.x, pos.y);
+    
+    // distはviewRectからC or C_dashまでの距離
+    Vec2 dist(C.x - _viewableX, C.y - _viewableY);
+    Vec2 dist_dash(C_dash.x - _viewableX, C_dash.y - _viewableY);
+    
+    // スクロール方向によりアニメーションを変える
+    if (direction == LPScrollableLayer::RIGHT) {
+        // TODO
+    } else if (direction == LPScrollableLayer::LEFT) {
+        // TODO
+    } else if (direction == LPScrollableLayer::DOWN && _scrollableY > 0) {
+        // スタート時点でスクロール可能範囲内にいるときのみアニメーション
+        bool canScrollable = ((dist.y - _viewableY)<0);
+        if (canScrollable) {
+            
+            // 移動後のCの位置がスクロール範囲外にいる場合は、中に収まるように移動距離を補正する
+            float diff_dash = dist_dash.y - _viewableY;
+            float correct_diff_dash = (diff_dash > 0) ? -diff_dash : 0;
+            if (correct_diff_dash < 0) {
+                C_dash = C_dash + (correct_diff_dash * dir);
+            }
+            
+            MoveTo* moveTo = CCMoveTo::create(1.0, C_dash);
+            Action* action = EaseBackOut::create(moveTo);
+            _container->runAction(action);
+        }
+    } else if (direction == LPScrollableLayer::UP && _scrollableY > 0) {
+        // スタート時点でスクロール可能範囲内にいるときのみアニメーション
+        bool canScrollable = !((-dist.y - _scrollableY)>0);
+        if (canScrollable) {
+            
+            // 移動後のCの位置がスクロール範囲外にいる場合は、中に収まるように移動距離を補正する
+            float diff_dash = -dist_dash.y - _scrollableY;
+            float correct_diff_dash = (diff_dash > 0) ? -diff_dash : 0;
+            if (correct_diff_dash < 0) {
+                C_dash = C_dash + (correct_diff_dash * dir);
+            }
+            
+            MoveTo* moveTo = CCMoveTo::create(1.0, C_dash);
+            Action* action = EaseBackOut::create(moveTo);
+            _container->runAction(action);
+        }
+    }
 }

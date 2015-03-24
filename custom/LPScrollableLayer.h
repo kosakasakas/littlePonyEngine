@@ -37,6 +37,9 @@ public:
     virtual void onEnter();
     virtual void onExit();
     
+    virtual void setContentOffset(Vec2 offset, bool animated = false);
+    virtual void setViewSize(Size size);
+    
     enum {
         kLPScrollableLayerPriority = -129
     };
@@ -57,6 +60,20 @@ private:
     Point _pressPoint;
     Layer* _containerMenu;
     bool _waitingTouchEnd;
+    Vec2 _originalContainerPos;
+    ValueMap _validScrollableDistMap;
+    Vec2 _offset;
+    
+    float _viewableX;
+    float _viewableY;
+    float _scrollableX;
+    float _scrollableY;
+    
+    bool canScrollHorizontal();
+    bool canScrollVertical();
+    void updateScrollInfo();
+    
+    void fitToAction(XTTouchDirection direction, float distance);
 };
 
 

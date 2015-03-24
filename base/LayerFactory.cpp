@@ -57,7 +57,6 @@ Node* LayerFactory::createObject(const ValueMap& defBody, const ValueMap& uiData
         slayer->setViewSize(requiredSize);
         
         // LP改造containerに格納
-        Point p = slayer->getAnchorPoint();
         slayer->setLPContainer((Menu*)container);
         
         // スクロール方向を格納
@@ -66,6 +65,7 @@ Node* LayerFactory::createObject(const ValueMap& defBody, const ValueMap& uiData
         } else if (scrollDirection == "horizontal") {
             slayer->setDirection(LPScrollView::Direction::HORIZONTAL);
         }
+        
         
         layer = slayer;
         
