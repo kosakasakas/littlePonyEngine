@@ -15,14 +15,28 @@ using namespace cocos2d;
 
 class UIDefMap : public Ref {
 public:
-    static const std::string UI_TYPE[];
     UIDefMap();
     virtual ~UIDefMap();
+    
     virtual bool init(const std::string& fileName);
+    
     static UIDefMap* create(const std::string& fileName);
     static UIDefMap* create();
+    
+    static const std::string UI_TYPE_NAME[];
+    enum UI_TYPE {
+        BUTTON,
+        LABEL,
+        COLOR,
+        NODE,
+        SPRITE,
+        LAYER,
+        NUM
+    };
+    
     void copyDef(const std::string& uiType, const std::string& uiDef, ValueMap& targetMap);
     const Color3B getColor(const std::string& colorDef);
+    
 private:
     ValueMap _uiDefMap;
 };

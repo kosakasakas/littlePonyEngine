@@ -74,23 +74,31 @@ Node* UIFactory::createObject(const std::string& uiType, const std::string& uiDe
 
 Node* UIFactory::createNode(const std::string& uiType, const ValueMap& defBody, const ValueMap& uiData) {
     Node* ret = NULL;
-    if (uiType == UIDefMap::UI_TYPE[0]) {
-        //ButtonFactory* bf = ButtonFactory::create();
+    if (uiType == UIDefMap::UI_TYPE_NAME[UIDefMap::UI_TYPE::BUTTON])
+    {
         MenuFactory* bf = MenuFactory::create();
         ret = bf->createObject(defBody, uiData);
-    } else if (uiType == UIDefMap::UI_TYPE[1]) {
+    }
+    else if (uiType == UIDefMap::UI_TYPE_NAME[UIDefMap::UI_TYPE::LABEL])
+    {
         LabelFactory* lf = LabelFactory::create();
         ret = lf->createObject(defBody, uiData);
-    } else if (uiType == UIDefMap::UI_TYPE[3]) {
+    }
+    else if (uiType == UIDefMap::UI_TYPE_NAME[UIDefMap::UI_TYPE::NODE])
+    {
         AbstructComponentFactory* acf = AbstructComponentFactory::create();
         ret = acf->createObject(defBody, uiData);
-    } else if (uiType == UIDefMap::UI_TYPE[4]) {
+    }
+    else if (uiType == UIDefMap::UI_TYPE_NAME[UIDefMap::UI_TYPE::SPRITE])
+    {
         SpriteFactory* sf = SpriteFactory::create();
         ret = sf->createObject(defBody, uiData);
-    } else if (uiType == UIDefMap::UI_TYPE[5]) {
+    }
+    else if (uiType == UIDefMap::UI_TYPE_NAME[UIDefMap::UI_TYPE::LAYER]) {
         LayerFactory* lf = LayerFactory::create();
         ret = lf->createObject(defBody, uiData);
-    } else {
+    }
+    else {
         CCLOG("can not support this UI type");
     }
     return ret;

@@ -8,8 +8,7 @@
 
 #include "UIDefMap.h"
 
-// UIFactoryで生成出来るUIコンポーネント一覧
-const std::string UIDefMap::UI_TYPE[] = {"button","label","color", "node", "sprite", "layer"};
+const std::string UIDefMap::UI_TYPE_NAME[] = {"button","label","color", "node", "sprite", "layer"};
 
 UIDefMap::UIDefMap()
 {
@@ -60,9 +59,9 @@ bool UIDefMap::init(const std::string& fileName) {
             for (Value child : children) {
                 ValueMap def = child.asValueMap();
                 std::string defType = def.at("type").asString();
-                int num = sizeof(UI_TYPE)/sizeof(UI_TYPE[0]);
-                for (int i = 0; i < num; ++i) {
-                    if (defType == UI_TYPE[i]) {
+                
+                for (int i = 0; i < UI_TYPE::NUM; ++i) {
+                    if (defType == UI_TYPE_NAME[i]) {
                         if (_uiDefMap.find(defType) == _uiDefMap.end()) {
                             // not found
                             ValueVector vec;
@@ -104,7 +103,7 @@ void UIDefMap::copyDef(const std::string& uiType, const std::string& uiDef, Valu
 
 const Color3B UIDefMap::getColor(const std::string& colorDef) {
     Color3B color;
-    ValueVector colorVec = _uiDefMap.at(UI_TYPE[2]).asValueVector();
+    ValueVector colorVec = _uiDefMap.at(UI_TYPE_NAME[UI_TYPE::COLOR]).asValueVector();
     for (Value colorVal: colorVec) {
         ValueMap colorMap = colorVal.asValueMap();
         if (colorMap.at("name").asString() == colorDef) {
