@@ -28,10 +28,13 @@ public:
     virtual void onTouchMoved(Touch* touch, Event* event);
     
     virtual void onEnter();
+    virtual void onExit();
 private:
     Rect validTouchRectInWorldSpace;
+    EventListenerTouchOneByOne* _LPScrollableMenuTouchListener;
     
     void addTouchListener();
+    void removeTouchListener();
 };
 
 

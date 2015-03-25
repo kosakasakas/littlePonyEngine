@@ -11,12 +11,13 @@
 //LPScrollableLayerよりも優先度落とす。
 #define SCROLLABLE_MENU_PRIORITY -127
 
-LPScrollableMenu::LPScrollableMenu(){
+LPScrollableMenu::LPScrollableMenu()
+: _LPScrollableMenuTouchListener(nullptr)
+{
     
 }
 
 LPScrollableMenu::~LPScrollableMenu(){
-    
 }
 
 LPScrollableMenu* LPScrollableMenu::createWithArray(const Vector<MenuItem*>& arrayOfItems)
@@ -37,6 +38,11 @@ LPScrollableMenu* LPScrollableMenu::createWithArray(const Vector<MenuItem*>& arr
 void LPScrollableMenu::onEnter() {
     Menu::onEnter();
     addTouchListener();
+}
+
+void LPScrollableMenu::onExit() {
+    removeTouchListener();
+    Menu::onExit();
 }
 
 bool LPScrollableMenu::onTouchBegan(Touch *touch, Event *event) {
@@ -65,6 +71,8 @@ void LPScrollableMenu::onTouchCancelled(Touch *touch, Event *event) {
 }
 
 void LPScrollableMenu::addTouchListener() {
+    removeTouchListener();
+    
     auto dispatcher = getEventDispatcher();
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(isSwallowsTouches());
@@ -73,4 +81,15 @@ void LPScrollableMenu::addTouchListener() {
     listener->onTouchEnded = CC_CALLBACK_2(LPScrollableMenu::onTouchEnded, this);
     listener->onTouchCancelled = CC_CALLBACK_2(LPScrollableMenu::onTouchCancelled, this);
     dispatcher->addEventListenerWithFixedPriority(listener, SCROLLABLE_MENU_PRIORITY);
+    
+    // onExitで消すために持っておく。消す用途以外無いのでretainはしない
+    _LPScrollableMenuTouchListener = listener;
+}
+
+void LPScrollableMenu::removeTouchListener() {
+    if (_LPScrollableMenuTouchListener != nullptr) {
+        auto dispatcher = getEventDispatcher();
+        dispatcher->removeEventListener(_LPScrollableMenuTouchListener);
+        _LPScrollableMenuTouchListener = nullptr;
+    }
 }

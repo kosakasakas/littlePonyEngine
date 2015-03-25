@@ -26,13 +26,10 @@ public:
     static LPScrollableLayer* create(Size size, Layer* containerMenu = NULL);
     
     virtual bool onTouchBegan(Touch* touch, Event* event);
-    virtual void onTouchesBegan(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
     virtual void onTouchCancelled(Touch* touch, Event* event);
-    virtual void onTouchesCancelled(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
     virtual void onTouchEnded(Touch* touch, Event* event);
-    virtual void onTouchesEnded(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
     virtual void onTouchMoved(Touch* touch, Event* event);
-    virtual void onTouchesMoved(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
+    
     
     virtual void onEnter();
     virtual void onExit();
@@ -57,10 +54,7 @@ public:
     virtual void xtSwipeGesture(XTTouchDirection direction, float distance, float speed);
     
 private:
-    virtual bool init();
-    virtual void addTouchListener();
     static const float MIN_DISTANCE;
-    
     Point _pressPoint;
     Layer* _containerMenu;
     bool _waitingTouchEnd;
@@ -68,11 +62,17 @@ private:
     ValueMap _validScrollableDistMap;
     Vec2 _offset;
     Rect _maskArea;
+    EventListenerTouchOneByOne* _LPScrollableLayerTouchListener;
     
     float _viewableX;
     float _viewableY;
     float _scrollableX;
     float _scrollableY;
+    
+    virtual bool init();
+    
+    void addTouchListener();
+    void removeTouchListener();
     
     bool canScrollHorizontal();
     bool canScrollVertical();

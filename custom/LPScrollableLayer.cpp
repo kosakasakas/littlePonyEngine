@@ -14,8 +14,9 @@ const float LPScrollableLayer::MIN_DISTANCE = 10;
 LPScrollableLayer::LPScrollableLayer()
 : LPScrollView::LPScrollView()
 , _waitingTouchEnd(false)
-, _containerMenu(NULL)
+, _containerMenu(nullptr)
 , _originalContainerPos(0,0)
+, _LPScrollableLayerTouchListener(nullptr)
 {
 }
 
@@ -79,9 +80,6 @@ bool LPScrollableLayer::onTouchBegan(Touch* touch, Event* event) {
     return LPScrollView::onTouchBegan(touch, event);
 }
 
-void LPScrollableLayer::onTouchesBegan(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event){
-}
-
 void LPScrollableLayer::onTouchCancelled(Touch* touch, Event* event) {
     if (_containerMenu && _waitingTouchEnd) {
         CCLOG("onTouchCancelled-onTouchCancelled");
@@ -89,9 +87,6 @@ void LPScrollableLayer::onTouchCancelled(Touch* touch, Event* event) {
         _waitingTouchEnd = false;
     }
     LPScrollView::onTouchCancelled(touch, event);
-}
-
-void LPScrollableLayer::onTouchesCancelled(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event){
 }
 
 void LPScrollableLayer::onTouchEnded(Touch* touch, Event* event) {
@@ -110,9 +105,6 @@ void LPScrollableLayer::onTouchEnded(Touch* touch, Event* event) {
     LPScrollView::onTouchEnded(touch, event);
 }
 
-void LPScrollableLayer::onTouchesEnded(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event){
-}
-
 void LPScrollableLayer::onTouchMoved(Touch* touch, Event* event) {
     if (_containerMenu && _waitingTouchEnd) {
         Point endPoint = touch->getLocationInView();
@@ -129,45 +121,8 @@ void LPScrollableLayer::onTouchMoved(Touch* touch, Event* event) {
     LPScrollView::onTouchMoved(touch, event);
 }
 
-void LPScrollableLayer::onTouchesMoved(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event){
-}
-
 void LPScrollableLayer::addTouchListener() {
-    if (_touchListener != nullptr) {
-        return;
-    }
-    auto dispatcher = getEventDispatcher();
-    if( getTouchMode() == Touch::DispatchMode::ALL_AT_ONCE )
-    {
-        /*// Register Touch Event
-        auto listener = EventListenerTouchAllAtOnce::create();
-        
-        listener->onTouchesBegan = CC_CALLBACK_2(LPScrollableLayer::onTouchesBegan, this);
-        listener->onTouchesMoved = CC_CALLBACK_2(LPScrollableLayer::onTouchesMoved, this);
-        listener->onTouchesEnded = CC_CALLBACK_2(LPScrollableLayer::onTouchesEnded, this);
-        listener->onTouchesCancelled = CC_CALLBACK_2(LPScrollableLayer::onTouchesCancelled, this);
-        
-        dispatcher->addEventListenerWithFixedPriority(listener, kLPScrollableLayerPriority);
-        _touchListener = listener;*/
-    }
-    else
-    {
-        // Register Touch Event
-        auto listener = EventListenerTouchOneByOne::create();
-        listener->setSwallowTouches(isSwallowsTouches());
-        
-        listener->onTouchBegan = CC_CALLBACK_2(LPScrollableLayer::onTouchBegan, this);
-        listener->onTouchMoved = CC_CALLBACK_2(LPScrollableLayer::onTouchMoved, this);
-        listener->onTouchEnded = CC_CALLBACK_2(LPScrollableLayer::onTouchEnded, this);
-        listener->onTouchCancelled = CC_CALLBACK_2(LPScrollableLayer::onTouchCancelled, this);
-        
-        dispatcher->addEventListenerWithFixedPriority(listener, kLPScrollableLayerPriority);
-        _touchListener = listener;
-    }
-}
-
-void LPScrollableLayer::onEnter() {
-    LPScrollView::onEnter();
+    removeTouchListener();
     
     auto dispatcher = Director::getInstance()->getEventDispatcher();
     auto listener = EventListenerTouchOneByOne::create();
@@ -180,13 +135,26 @@ void LPScrollableLayer::onEnter() {
     
     // スクロールレイヤーより先にボタンがタッチを取らせないようにする。
     dispatcher->addEventListenerWithFixedPriority(listener, kLPScrollableLayerPriority);
-    _touchListener = listener;
+    
+    // onExitで消すために持っておく。消す用途以外無いのでretainはしない
+    _LPScrollableLayerTouchListener = listener;
+}
+
+void LPScrollableLayer::removeTouchListener() {
+    if (_LPScrollableLayerTouchListener != nullptr) {
+        auto dispatcher = Director::getInstance()->getEventDispatcher();
+        dispatcher->removeEventListener(_LPScrollableLayerTouchListener);
+        _LPScrollableLayerTouchListener = nullptr;
+    }
+}
+
+void LPScrollableLayer::onEnter() {
+    LPScrollView::onEnter();
+    addTouchListener();
 }
 
 void LPScrollableLayer::onExit() {
-    auto dispatcher = Director::getInstance()->getEventDispatcher();
-    dispatcher->removeEventListener(_touchListener);
-    
+    removeTouchListener();
     LPScrollView::onExit();
 }
 
@@ -197,18 +165,6 @@ void LPScrollableLayer::setContentOffset(Vec2 offset, bool animated) {
     LPScrollView::setContentOffset(offset, animated);
     updateScrollInfo();
     _offset = offset;
-    
-    /*
-    // Offsetを入れる前の位置を原点として持っておく
-    _originalContainerPos = _container->getPosition();
-    
-    // Offsetを入れた後の位置から有効スクロール距離を計算しておく
-    LPScrollView::setContentOffset(offset, animated);
-    getScrollableDistance(_validScrollableDistMap, _container->getPosition());
-    
-    // Offsetを入れた後の位置を原点に入れ替える
-    _originalContainerPos = _container->getPosition();
-     */
 }
 
 void LPScrollableLayer::setViewSize(Size size) {
