@@ -49,12 +49,13 @@ Node* LayerFactory::createObject(const ValueMap& defBody, const ValueMap& uiData
         // containerタグ以下でscrollableMenuのリストNodeを作る。
         NodeFactory* nf = NodeFactory::create();
         Node* container = nf->getContainerNode(uiData);
-        
-        // containerのサイズにlayerを合わせる
-        Size s = container->getContentSize();
-        slayer->setContentSize(container->getContentSize());
-        slayer->setContentOffset(Vec2(0, (requiredSize.height - s.height)), false);
-        slayer->setViewSize(requiredSize);
+        if (container) {
+            // containerのサイズにlayerを合わせる
+            Size s = container->getContentSize();
+            slayer->setContentSize(container->getContentSize());
+            slayer->setContentOffset(Vec2(0, (requiredSize.height - s.height)), false);
+            slayer->setLPContainer((Menu*)container);
+        }
         
         // ScrollView上でタッチを透過するMaskAreaを設定する
         Rect maskArea;
@@ -67,8 +68,8 @@ Node* LayerFactory::createObject(const ValueMap& defBody, const ValueMap& uiData
         }
         slayer->setMaskArea(maskArea);
         
-        // LP改造containerに格納
-        slayer->setLPContainer((Menu*)container);
+        // ViewSizeの指定
+        slayer->setViewSize(requiredSize);
         
         // スクロール方向を格納
         if (scrollDirection == "vertical") {
@@ -76,7 +77,6 @@ Node* LayerFactory::createObject(const ValueMap& defBody, const ValueMap& uiData
         } else if (scrollDirection == "horizontal") {
             slayer->setDirection(LPScrollView::Direction::HORIZONTAL);
         }
-        
         
         layer = slayer;
         
