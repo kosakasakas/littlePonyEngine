@@ -20,10 +20,18 @@ public:
     static LPScrollableMenu* createWithArray(const Vector<MenuItem*>& arrayOfItems);
     CREATE_FUNC(LPScrollableMenu);
     
-    virtual bool onTouchBegan(Touch *touch, Event *event);
     void setValidTouchRectInWorldSpace(Rect rect) { this->validTouchRectInWorldSpace = rect; };
+    
+    virtual bool onTouchBegan(Touch* touch, Event* event);
+    virtual void onTouchCancelled(Touch* touch, Event* event);
+    virtual void onTouchEnded(Touch* touch, Event* event);
+    virtual void onTouchMoved(Touch* touch, Event* event);
+    
+    virtual void onEnter();
 private:
     Rect validTouchRectInWorldSpace;
+    
+    void addTouchListener();
 };
 
 

@@ -70,7 +70,6 @@ void XTLayer::onTouchMoved(cocos2d::Touch* _touches, cocos2d::Event* event)
     // Passthrough
     this->xtTouchMoved(location);
     this->xtTouchMoved(_touches, event);
-
 }
 
 void XTLayer::onTouchEnded(cocos2d::Touch* _touches, cocos2d::Event* event)

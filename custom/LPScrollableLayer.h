@@ -41,11 +41,14 @@ public:
     virtual void setViewSize(Size size);
     
     enum {
-        kLPScrollableLayerPriority = -129
+        // Menu系は-128なので、それと同等の優先度にする。
+        // 一方、LPScrollableMenuについては先にタッチされると困るので、kLPScrollableLayerPriorityよりもさらに下げる。
+        kLPScrollableLayerPriority = -128
     };
     
     // 実際にはsddChildさせずに_containerMenuに入れる
     virtual void setLPContainer(Layer* container);
+    void setMaskArea(Rect& maskArea);
     
     // XT Gesture
     virtual void xtTapGesture(Point position);
@@ -57,12 +60,14 @@ private:
     virtual bool init();
     virtual void addTouchListener();
     static const float MIN_DISTANCE;
+    
     Point _pressPoint;
     Layer* _containerMenu;
     bool _waitingTouchEnd;
     Vec2 _originalContainerPos;
     ValueMap _validScrollableDistMap;
     Vec2 _offset;
+    Rect _maskArea;
     
     float _viewableX;
     float _viewableY;

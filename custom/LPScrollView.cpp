@@ -679,9 +679,7 @@ bool LPScrollView::onTouchBegan(Touch* touch, Event* event)
     }
     
     // XTLayerに送る
-    XTLayer::onTouchBegan(touch, event);
-    
-    return true;
+    return XTLayer::onTouchBegan(touch, event);
 }
 
 void LPScrollView::onTouchMoved(Touch* touch, Event* event)

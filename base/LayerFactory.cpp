@@ -56,6 +56,17 @@ Node* LayerFactory::createObject(const ValueMap& defBody, const ValueMap& uiData
         slayer->setContentOffset(Vec2(0, (requiredSize.height - s.height)), false);
         slayer->setViewSize(requiredSize);
         
+        // ScrollView上でタッチを透過するMaskAreaを設定する
+        Rect maskArea;
+        ValueVector maskVec;
+        if (uiData.find("maskArea") != uiData.end()){
+            maskVec = uiData.at("maskArea").asValueVector();
+            ValueMap rectMap = maskVec[0].asValueMap();
+            maskArea.origin = Vec2(rectMap.at("x").asInt(), rectMap.at("y").asInt());
+            maskArea.size =  Size(rectMap.at("width").asInt(), rectMap.at("height").asInt());
+        }
+        slayer->setMaskArea(maskArea);
+        
         // LP改造containerに格納
         slayer->setLPContainer((Menu*)container);
         

@@ -65,11 +65,17 @@ bool LPScrollableLayer::init() {
 bool LPScrollableLayer::onTouchBegan(Touch* touch, Event* event) {
     CCLOG("LPScrollableLayer onTouchBegan called.");
     _pressPoint = touch->getLocationInView();
+    _container->stopAllActions();
     if (_containerMenu && !_waitingTouchEnd) {
         CCLOG("onTouchBegin-onTouchbegin");
-        _container->stopAllActions();
         _waitingTouchEnd = _containerMenu->onTouchBegan(touch, event);
     }
+    
+    // タッチ透過エリア内ならfalse
+    if (_maskArea.containsPoint(_pressPoint)) {
+        return false;
+    }
+    
     return LPScrollView::onTouchBegan(touch, event);
 }
 
@@ -205,6 +211,12 @@ void LPScrollableLayer::setContentOffset(Vec2 offset, bool animated) {
 void LPScrollableLayer::setViewSize(Size size) {
     LPScrollView::setViewSize(size);
     updateScrollInfo();
+}
+
+void LPScrollableLayer::setMaskArea(Rect& area) {
+    Vec2 origin = this->convertToNodeSpace(area.origin);
+    _maskArea.origin = origin;
+    _maskArea.size = area.size;
 }
 
 void LPScrollableLayer::updateScrollInfo() {
