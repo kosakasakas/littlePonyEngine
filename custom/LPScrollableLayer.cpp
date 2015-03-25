@@ -184,6 +184,9 @@ void LPScrollableLayer::onEnter() {
 }
 
 void LPScrollableLayer::onExit() {
+    auto dispatcher = Director::getInstance()->getEventDispatcher();
+    dispatcher->removeEventListener(_touchListener);
+    
     LPScrollView::onExit();
 }
 
