@@ -18,9 +18,6 @@ LabelFactory::~LabelFactory()
 }
 
 Node* LabelFactory::createObject(const ValueMap& valMap, const ValueMap& uiData) {
-    Node* node = AbstructComponentFactory::createObject(valMap, uiData);
-    node->retain();
-    
     // from defMap
     std::string font = valMap.at("font").asString();
     std::string fontType = valMap.at("fontType").asString();
@@ -46,7 +43,7 @@ Node* LabelFactory::createObject(const ValueMap& valMap, const ValueMap& uiData)
         label->setColor(color);
     }
     
-    node->addChild(label);
-    
-    return node;
+    setProperty(label, uiData);
+    label->retain();
+    return label;
 }
