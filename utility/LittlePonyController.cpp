@@ -8,6 +8,8 @@
 
 #include "LittlePonyController.h"
 #include "NodeFactory.h"
+#include "ActionFactory.h"
+
 using namespace cocos2d;
 
 LittlePonyController* LittlePonyController::_singleton = NULL;
@@ -59,6 +61,13 @@ Ref* LittlePonyController::getData(const char* fileName, const char* tagName) {
         Node* node = nf->createObject(body);
         node->setTag(tag);
         return node;
+    }
+    if (type == "action")
+    {
+        const ValueMap body = targetData.at("body").asValueMap();
+        ActionFactory* af = ActionFactory::create();
+        Action* act = af->createAction(body);
+        return act;
     }
     else if (type == "uidef") {
         return NULL;
