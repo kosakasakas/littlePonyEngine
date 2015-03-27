@@ -20,6 +20,7 @@
 #include "utility/AppManager.h"
 #include "utility/AppMacros.h"
 #include "utility/LittlePonyController.h"
+#include "utility/FSM.h"
 
 // base
 #include "base/BaseObject.h"
