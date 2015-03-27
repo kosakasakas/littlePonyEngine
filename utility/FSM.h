@@ -14,7 +14,9 @@
 using namespace cocos2d;
 
 // FSM.hはFinite Ftate Machine用の抽象関数群を提供します。
-
+namespace FSM
+{
+    
 class Transition;
 class TransitCondition;
 class State;
@@ -34,7 +36,6 @@ public:
     };
     
     void update(); // 未定義エラー回避のため実装は下に記述。
-    State* getCurrentState(){ return _currentState; };
     
 protected:
     State* _currentState;
@@ -133,4 +134,5 @@ State* State::updateTransition()
     return nullptr;
 }
 
+}
 #endif /* defined(__BabylonClicker__FSM__) */

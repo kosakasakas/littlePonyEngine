@@ -9,7 +9,7 @@
 #define __LITTLE_PONY_ENGINE_H__
 
 // 0x00 HI ME LO
-// 00   03 03 00
+// 00   01 00 00
 #define LITTLE_PONY_VERSION 0x00010000
 
 //
@@ -25,6 +25,9 @@
 // base
 #include "base/BaseObject.h"
 #include "base/NodeFactory.h"
+
+// custom
+#include "custom/LPScrollableLayer.h"
 
 // test
 #include "Test.h"
